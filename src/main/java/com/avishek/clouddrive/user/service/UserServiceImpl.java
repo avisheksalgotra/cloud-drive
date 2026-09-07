@@ -1,13 +1,12 @@
 package com.avishek.clouddrive.user.service;
 
+import com.avishek.clouddrive.exceptions.EmailAlreadyExistsException;
 import com.avishek.clouddrive.user.dto.CreateUserRequest;
 import com.avishek.clouddrive.user.dto.CreateUserResponse;
 import com.avishek.clouddrive.user.entity.User;
 import com.avishek.clouddrive.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,7 +21,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public CreateUserResponse createUser(CreateUserRequest request) {
         if(userRepository.existsByEmail(request.getEmail())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
+            throw new EmailAlreadyExistsException(request.getEmail());
         }
         User user = new User();
         user.setEmail(request.getEmail());
