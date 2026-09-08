@@ -1,6 +1,7 @@
 package com.avishek.clouddrive.user.service;
 
 import com.avishek.clouddrive.exceptions.EmailAlreadyExistsException;
+import com.avishek.clouddrive.exceptions.ResourceNotFoundException;
 import com.avishek.clouddrive.user.dto.CreateUserRequest;
 import com.avishek.clouddrive.user.dto.CreateUserResponse;
 import com.avishek.clouddrive.user.entity.User;
@@ -28,11 +29,27 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName());
         user.setPasswordHash(request.getPassword());
         userRepository.save(user);
-        CreateUserResponse response = new CreateUserResponse();
-        response.setId(user.getId());
-        response.setEmail(user.getEmail());
-        response.setName(user.getName());
-        response.setCreatedAt(user.getCreatedAt());
+        CreateUserResponse response = mapToCreateUserResponse(user);
         return response;
+    }
+
+    @Override
+    public CreateUserResponse findById(Long id) {
+        User user = userRepository.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("User","id",id));
+        CreateUserResponse response = mapToCreateUserResponse(user);
+        return response;
+    }
+
+
+//  **************HELPER FUNCTIONS**************
+
+    private CreateUserResponse mapToCreateUserResponse(User user){
+        return new CreateUserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getCreatedAt()
+        );
     }
 }
