@@ -16,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -103,6 +102,15 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.save(user);
 
         return mapToCreateUserResponse(updatedUser);
+    }
+
+    @Override
+    public CreateUserResponse deleteById(Long id) {
+        User user = userRepository.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("User","id",id));
+        userRepository.delete(user);
+        return mapToCreateUserResponse(user);
+
     }
 
 //  **************HELPER FUNCTIONS**************

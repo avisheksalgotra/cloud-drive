@@ -15,4 +15,6 @@ public interface UserService {
     UserResponse findAll(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     CreateUserResponse updateUser(Long id, UpdateUserRequest request);
+
+    CreateUserResponse deleteById(Long id);
 }
