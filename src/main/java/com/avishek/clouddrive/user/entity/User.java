@@ -8,7 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -42,4 +44,17 @@ public class User {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @ManyToMany
+    @JoinTable(name = "user_role",
+     joinColumns = @JoinColumn(name = "user_id"),
+     inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+    public User(String name, String email, String passwordHash, Set<Role> roles) {
+        this.name = name;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.roles = roles;
+    }
 }

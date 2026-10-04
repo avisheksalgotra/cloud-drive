@@ -10,9 +10,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -24,17 +24,21 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @PostMapping()
     public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
         CreateUserResponse response = userService.createUser(request);
         return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<CreateUserResponse> findById(@PathVariable Long id) {
         CreateUserResponse user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<UserResponse> findAll(
             @RequestParam(name = "pageNumber",defaultValue = Config.PAGE_NUMBER,required = false) Integer pageNumber,
@@ -46,12 +50,14 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<CreateUserResponse> updateUser(@PathVariable Long id,@Valid @RequestBody UpdateUserRequest request) {
         CreateUserResponse response = userService.updateUser(id,request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<CreateUserResponse> deleteUser(@PathVariable Long id) {
         CreateUserResponse deletedUser = userService.deleteById(id);
